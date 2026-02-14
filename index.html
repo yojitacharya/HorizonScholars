@@ -1,0 +1,656 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Horizon Scholars | Unlock Your Potential</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <style>
+            @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap");
+            body {
+                font-family: "Plus Jakarta Sans", sans-serif;
+                background-color: #fcfbf7;
+            }
+            .nav-link {
+                font-weight: 600;
+                color: #4b5563;
+                transition: color 0.2s;
+                cursor: pointer;
+            }
+            .nav-link:hover {
+                color: #065f46;
+            }
+            .btn-green {
+                background-color: #065f46;
+                color: white;
+                padding: 0.75rem 1.5rem;
+                border-radius: 0.5rem;
+                font-weight: 600;
+                transition: transform 0.2s;
+            }
+            .btn-green:hover {
+                transform: translateY(-2px);
+                background-color: #047857;
+            }
+            .hidden {
+                display: none;
+            }
+            section {
+                animation: fadeIn 0.5s ease-in-out;
+            }
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            .btn-loading {
+                position: relative;
+                color: transparent !important;
+                pointer-events: none;
+                opacity: 0.7;
+            }
+            .btn-loading::after {
+                content: "";
+                position: absolute;
+                width: 16px;
+                height: 16px;
+                top: 50%;
+                left: 50%;
+                margin-left: -8px;
+                margin-top: -8px;
+                border: 2px solid #ffffff;
+                border-radius: 50%;
+                border-top-color: transparent;
+                animation: spinner 0.6s linear infinite;
+            }
+            @keyframes spinner {
+                to {
+                    transform: rotate(360deg);
+                }
+            }
+            .input-error {
+                border-color: #ef4444 !important;
+                background-color: #fef2f2 !important;
+            }
+            .error-message {
+                color: #ef4444;
+                font-size: 0.875rem;
+                margin-top: 0.25rem;
+                display: none;
+            }
+            .error-message.show {
+                display: block;
+            }
+        </style>
+    </head>
+    <body>
+        <header class="bg-white border-b border-stone-200 sticky top-0 z-50">
+            <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+                <h1 class="text-2xl font-extrabold text-stone-900 cursor-pointer" onclick="nav('home')">
+                    Horizon <span class="text-emerald-700">Scholars</span>
+                </h1>
+                <nav class="hidden md:flex space-x-8">
+                    <span class="nav-link" onclick="nav('home')">Home</span>
+                    <span class="nav-link" onclick="nav('about')">About Us</span>
+                    <span class="nav-link" onclick="nav('grants')">Grants</span>
+                    <span class="nav-link" onclick="nav('contact')">Contact</span>
+                    <span class="nav-link text-emerald-700" onclick="nav('portal')">Student Portal</span>
+                </nav>
+                <button onclick="nav('portal')" class="btn-green text-sm">Apply Now</button>
+            </div>
+        </header>
+
+        <main>
+            <section id="home" class="py-20">
+                <div class="container mx-auto px-6 text-center max-w-4xl">
+                    <h2 class="text-5xl md:text-6xl font-extrabold text-stone-900 mb-6 leading-tight">Unlock Your Potential with Horizon Scholars</h2>
+                    <p class="text-xl text-stone-600 mb-10">
+                        Empowering students in Arkansas to achieve academic excellence by removing financial barriers to college.
+                    </p>
+                    <div class="flex justify-center space-x-4">
+                        <button onclick="nav('about')" class="btn-green shadow-lg">Learn More</button>
+                        <button
+                            onclick="nav('contact')"
+                            class="bg-white border border-stone-300 px-6 py-3 rounded-lg font-semibold hover:bg-stone-50 transition"
+                        >
+                            Get Started
+                        </button>
+                    </div>
+
+                    <div class="grid md:grid-cols-3 gap-8 mt-24">
+                        <div class="bg-white p-8 rounded-2xl border border-stone-200 shadow-sm text-left">
+                            <h3 class="text-xl font-bold mb-3 text-emerald-800">About Us</h3>
+                            <p class="text-stone-500 mb-4">Discover our mission to support underprivileged students in their educational journey.</p>
+                            <span onclick="nav('about')" class="text-emerald-700 font-bold cursor-pointer hover:underline">Our Mission →</span>
+                        </div>
+                        <div class="bg-white p-8 rounded-2xl border border-stone-200 shadow-sm text-left">
+                            <h3 class="text-xl font-bold mb-3 text-emerald-800">Grants Program</h3>
+                            <p class="text-stone-500 mb-4">Explore our initiatives designed to alleviate test and admission burdens.</p>
+                            <span onclick="nav('grants')" class="text-emerald-700 font-bold cursor-pointer hover:underline">View Grants →</span>
+                        </div>
+                        <div class="bg-white p-8 rounded-2xl border border-stone-200 shadow-sm text-left">
+                            <h3 class="text-xl font-bold mb-3 text-emerald-800">Contact Us</h3>
+                            <p class="text-stone-500 mb-4">Get in touch for inquiries or to start your journey toward higher education.</p>
+                            <span onclick="nav('contact')" class="text-emerald-700 font-bold cursor-pointer hover:underline">Reach Out →</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="about" class="hidden py-20 bg-white">
+                <div class="container mx-auto px-6 max-w-3xl">
+                    <h2 class="text-4xl font-bold mb-6">About Horizon Scholars</h2>
+                    <p class="text-lg text-stone-600 mb-6">
+                        Horizon Scholars was founded on a simple belief: <strong>Finances should never dictate a student's future.</strong>
+                    </p>
+                    <p class="text-stone-600 mb-4">
+                        We are a 501(c)(3) non-profit organization dedicated to providing financial assistance to underprivileged students. By covering the
+                        costs of essential steps like standardized testing and college applications, we help scholars focus on what matters most: their
+                        education.
+                    </p>
+                    <div class="bg-emerald-50 p-6 rounded-xl border-l-4 border-emerald-700 mt-8">
+                        <h4 class="font-bold text-emerald-900">Our Vision</h4>
+                        <p class="text-emerald-800">
+                            To create a world where every student, regardless of their background, has the resources they need to transition into higher
+                            education successfully.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="grants" class="hidden py-20">
+                <div class="container mx-auto px-6 max-w-3xl">
+                    <h2 class="text-4xl font-bold mb-6">Grants Program</h2>
+                    <p class="text-stone-600 mb-8">
+                        At Horizon Scholars, we provide a grant initiative made to alleviate the costs of education for underprivileged students. We know that
+                        educational expenses can hinder your education, and our grants are intended to help bridge that gap.
+                    </p>
+
+                    <h3 class="text-2xl font-bold mb-4">Who Can Apply?</h3>
+                    <p class="text-stone-600 mb-8">
+                        Our grants are open to students who show they have real financial need and a commitment to their education. All students are encouraged
+                        to apply regardless of their background.
+                    </p>
+
+                    <div class="grid md:grid-cols-2 gap-6 mb-12">
+                        <div class="p-6 bg-white rounded-xl border border-stone-200">
+                            <h4 class="font-bold text-emerald-700 mb-2">College Admission Grants</h4>
+                            <p class="text-sm text-stone-500">Covers the fees associated with applying to public and private universities.</p>
+                        </div>
+                        <div class="p-6 bg-white rounded-xl border border-stone-200">
+                            <h4 class="font-bold text-emerald-700 mb-2">Test Fee Grants</h4>
+                            <p class="text-sm text-stone-500">Assists with the fees associated with many types of standardized tests (ACT, SAT, etc.).</p>
+                        </div>
+                    </div>
+
+                    <div class="text-center p-10 bg-stone-900 text-white rounded-3xl">
+                        <h2 class="text-3xl font-bold mb-4">Ready to Unlock Your Potential?</h2>
+                        <button onclick="nav('portal')" class="btn-green">Apply in the Student Portal</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="contact" class="hidden py-20">
+                <div class="container mx-auto px-6 max-w-3xl text-center">
+                    <h2 class="text-4xl font-bold mb-4">Get In Touch</h2>
+                    <p class="text-stone-600 mb-10">Have questions? We're here to help. Reach out to our team at any time.</p>
+                    <div class="bg-white p-10 rounded-3xl border border-stone-200 shadow-sm text-left">
+                        <h3 class="text-xl font-bold mb-4">Email Us</h3>
+                        <p class="text-emerald-700 text-2xl font-semibold mb-6">grants@horizonscholars.org</p>
+                        <hr class="mb-6" />
+                        <h3 class="text-xl font-bold mb-4">Location</h3>
+                        <p class="text-stone-500">Hot Springs, Arkansas</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="portal" class="hidden py-20">
+                <div class="container mx-auto px-6 max-w-xl">
+                    <div id="auth-ui" class="bg-white p-10 rounded-3xl border border-stone-200 shadow-sm">
+                        <h3 class="text-3xl font-bold mb-2">Student Access</h3>
+                        <p class="text-stone-500 mb-8">Log in to manage your applications.</p>
+                        <div class="space-y-4">
+                            <input id="email" type="email" placeholder="Email Address" class="w-full p-4 border border-stone-200 rounded-xl bg-stone-50" />
+                            <input id="pass" type="password" placeholder="Password" class="w-full p-4 border border-stone-200 rounded-xl bg-stone-50" />
+                            <div class="flex gap-2">
+                                <button id="login-btn" onclick="handleAuth('login')" class="flex-1 btn-green py-4">Log In</button>
+                                <button id="signup-btn" onclick="handleAuth('signup')" class="flex-1 bg-stone-100 font-bold rounded-lg">Sign Up</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="dash-ui" class="hidden space-y-8">
+                        <div class="bg-emerald-50 p-8 rounded-2xl border border-emerald-100 space-y-4">
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-3xl font-bold">Your Portal</h3>
+                                <button onclick="logout()" class="text-red-500 text-sm font-bold underline">Sign Out</button>
+                            </div>
+                            <h4 class="font-bold text-emerald-900">New Grant Request</h4>
+
+                            <div>
+                                <input
+                                    id="app-name"
+                                    type="text"
+                                    placeholder="Full Legal Name *"
+                                    class="w-full p-4 rounded-xl border border-emerald-200"
+                                    required
+                                />
+                                <p class="error-message" id="name-error">Please enter your full legal name</p>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-bold text-emerald-800 ml-1 mb-2">Fee Amount (USD) *</label>
+                                <input
+                                    id="app-amount"
+                                    type="number"
+                                    min="0"
+                                    step="0.01"
+                                    placeholder="0.00"
+                                    class="w-full p-4 rounded-xl border border-emerald-200"
+                                    required
+                                />
+                                <p class="error-message" id="amount-error">Please enter a valid fee amount</p>
+                            </div>
+
+                            <label class="block text-sm font-bold text-emerald-800 ml-1">Upload Receipt/Document (Optional):</label>
+                            <input
+                                id="app-file"
+                                type="file"
+                                class="w-full p-2 bg-white rounded-lg border border-emerald-200"
+                                accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                            />
+
+                            <select id="app-type" class="w-full p-4 rounded-xl border border-emerald-200">
+                                <option>ACT Fee Grant</option>
+                                <option>SAT Fee Grant</option>
+                                <option>College Admission Fee</option>
+                                <option>Other (Explain)</option>
+                            </select>
+
+                            <div>
+                                <textarea
+                                    id="app-reason"
+                                    placeholder="Be sure to explain how your financial situation impacts your eligibility for grants. *"
+                                    class="w-full p-4 rounded-xl border border-emerald-200"
+                                    rows="4"
+                                    required
+                                ></textarea>
+                                <p class="error-message" id="reason-error">Please provide a detailed explanation</p>
+                            </div>
+
+                            <button id="submit-btn" onclick="submitApp()" class="w-full btn-green py-4">Submit Application</button>
+                        </div>
+
+                        <div id="app-list" class="space-y-4"></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="py-12 bg-white border-t border-stone-200 mt-20">
+            <div class="container mx-auto px-6 text-center text-stone-400 text-sm">
+                <p>2026 Horizon Scholars.</p>
+                <p>Hot Springs, Arkansas | Nonprofit Organization</p>
+            </div>
+        </footer>
+
+        <script>
+            const sb = window.supabase.createClient(
+                "https://rbihllrtrznljcrahpif.supabase.co",
+                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJiaWhsbHJ0cnpubGpjcmFocGlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEwODQwNzcsImV4cCI6MjA4NjY2MDA3N30.JN6kaYBnHNn_qolAJIqDvBgn3RTumuHF49V_N_0M4dI",
+            );
+
+            function nav(id) {
+                console.log("Navigating to:", id);
+                document.querySelectorAll("main > section").forEach((s) => s.classList.add("hidden"));
+                document.getElementById(id).classList.remove("hidden");
+                window.scrollTo(0, 0);
+            }
+
+            function setButtonLoading(buttonId, isLoading) {
+                const btn = document.getElementById(buttonId);
+                if (isLoading) {
+                    btn.classList.add("btn-loading");
+                    btn.disabled = true;
+                } else {
+                    btn.classList.remove("btn-loading");
+                    btn.disabled = false;
+                }
+            }
+
+            function clearError(inputId, errorId) {
+                const input = document.getElementById(inputId);
+                const error = document.getElementById(errorId);
+                input.classList.remove("input-error");
+                error.classList.remove("show");
+            }
+
+            function showError(inputId, errorId) {
+                const input = document.getElementById(inputId);
+                const error = document.getElementById(errorId);
+                input.classList.add("input-error");
+                error.classList.add("show");
+            }
+
+            function validateForm() {
+                let isValid = true;
+
+                // Clear all errors first
+                clearError("app-name", "name-error");
+                clearError("app-amount", "amount-error");
+                clearError("app-reason", "reason-error");
+
+                // Validate name
+                const name = document.getElementById("app-name").value.trim();
+                if (!name) {
+                    showError("app-name", "name-error");
+                    isValid = false;
+                }
+
+                // Validate amount
+                const amount = document.getElementById("app-amount").value;
+                if (!amount || parseFloat(amount) <= 0) {
+                    showError("app-amount", "amount-error");
+                    isValid = false;
+                }
+
+                // Validate reason
+                const reason = document.getElementById("app-reason").value.trim();
+                if (!reason || reason.length < 10) {
+                    showError("app-reason", "reason-error");
+                    document.getElementById("reason-error").textContent = "Please provide a detailed explanation (at least 10 characters)";
+                    isValid = false;
+                }
+
+                return isValid;
+            }
+
+            async function handleAuth(type) {
+                const email = document.getElementById("email").value;
+                const password = document.getElementById("pass").value;
+                const buttonId = type === "login" ? "login-btn" : "signup-btn";
+
+                if (!email || !password) {
+                    alert("Please enter both an email and password.");
+                    return;
+                }
+
+                setButtonLoading(buttonId, true);
+
+                try {
+                    if (type === "signup") {
+                        const { data, error } = await sb.auth.signUp({
+                            email,
+                            password,
+                            options: {
+                                emailRedirectTo: window.location.href,
+                            },
+                        });
+
+                        if (error) {
+                            alert("Sign Up Error: " + error.message);
+                        } else {
+                            alert("Success! Please check your email for a confirmation link before logging in.");
+                        }
+                    } else {
+                        const { data, error } = await sb.auth.signInWithPassword({ email, password });
+                        if (error) {
+                            alert("Login Error: " + error.message);
+                        } else {
+                            checkSession();
+                        }
+                    }
+                } finally {
+                    setButtonLoading(buttonId, false);
+                }
+            }
+
+            async function logout() {
+                await sb.auth.signOut();
+                checkSession();
+            }
+
+            async function checkSession() {
+                const {
+                    data: { user },
+                } = await sb.auth.getUser();
+                const authUI = document.getElementById("auth-ui");
+                const dashUI = document.getElementById("dash-ui");
+
+                if (user) {
+                    authUI.classList.add("hidden");
+                    dashUI.classList.remove("hidden");
+
+                    const isAdmin = user.app_metadata?.is_admin;
+
+                    if (isAdmin) {
+                        loadAdminDashboard();
+                    } else {
+                        loadApps();
+                    }
+                } else {
+                    authUI.classList.remove("hidden");
+                    dashUI.classList.add("hidden");
+                }
+            }
+
+            async function submitApp() {
+                // Validate form first
+                if (!validateForm()) {
+                    alert("Please fill in all required fields correctly.");
+                    return;
+                }
+
+                setButtonLoading("submit-btn", true);
+
+                try {
+                    const {
+                        data: { user },
+                    } = await sb.auth.getUser();
+
+                    const fileInput = document.getElementById("app-file");
+                    const file = fileInput.files[0];
+
+                    let fileUrl = null;
+
+                    if (file) {
+                        const fileExt = file.name.split(".").pop();
+                        const fileName = `${Date.now()}.${fileExt}`;
+                        const filePath = `${user.id}/${fileName}`;
+
+                        const { data: uploadData, error: uploadError } = await sb.storage.from("receipts").upload(filePath, file);
+
+                        if (uploadError) {
+                            console.error("Upload Error:", uploadError);
+                            alert("File upload failed: " + uploadError.message);
+                            return;
+                        }
+
+                        const { data: urlData } = sb.storage.from("receipts").getPublicUrl(filePath);
+                        fileUrl = urlData.publicUrl;
+                    }
+
+                    // Insert into Database
+                    const { error: dbError } = await sb.from("apps").insert([
+                        {
+                            user_id: user.id,
+                            student_email: user.email,
+                            full_name: document.getElementById("app-name").value.trim(),
+                            fee_amount: parseFloat(document.getElementById("app-amount").value),
+                            test_type: document.getElementById("app-type").value,
+                            reason: document.getElementById("app-reason").value.trim(),
+                            file_url: fileUrl,
+                        },
+                    ]);
+
+                    if (dbError) {
+                        alert("Database Error: " + dbError.message);
+                    } else {
+                        alert("Application sent successfully!");
+
+                        // Clear the form
+                        document.getElementById("app-name").value = "";
+                        document.getElementById("app-amount").value = "";
+                        document.getElementById("app-reason").value = "";
+                        document.getElementById("app-file").value = "";
+                        document.getElementById("app-type").selectedIndex = 0;
+
+                        loadApps();
+                    }
+                } finally {
+                    setButtonLoading("submit-btn", false);
+                }
+            }
+
+            async function updateStatus(id, newStatus) {
+                const { error } = await sb.from("apps").update({ status: newStatus }).eq("id", id);
+
+                if (error) {
+                    alert("Update failed: " + error.message);
+                } else {
+                    alert(`Application ${newStatus}`);
+                    loadAdminDashboard();
+                }
+            }
+
+            async function loadAdminDashboard(filterStatus = "All") {
+                const list = document.getElementById("app-list");
+                const title = document.getElementById("portal-title");
+                const form = document.querySelector(".bg-emerald-50");
+
+                if (title) title.innerText = "Admin Control Panel";
+                if (form) form.classList.add("hidden");
+
+                let query = sb.from("apps").select("*");
+
+                if (filterStatus !== "All") {
+                    query = query.eq("status", filterStatus);
+                }
+
+                const { data, error } = await query.order("created_at", { ascending: false });
+
+                if (error) {
+                    list.innerHTML = `<p class="text-red-500">Error: ${error.message}</p>`;
+                    return;
+                }
+
+                const filterHTML = `
+                    <div class="flex items-center gap-4 mb-6 bg-stone-100 p-4 rounded-xl">
+                        <span class="text-sm font-bold text-stone-600">Filter by Status:</span>
+                        <select onchange="loadAdminDashboard(this.value)" class="p-2 rounded-lg border border-stone-300 text-sm">
+                            <option value="All" ${filterStatus === "All" ? "selected" : ""}>All Requests</option>
+                            <option value="Pending" ${filterStatus === "Pending" ? "selected" : ""}>Pending</option>
+                            <option value="Approved" ${filterStatus === "Approved" ? "selected" : ""}>Approved</option>
+                            <option value="Denied" ${filterStatus === "Denied" ? "selected" : ""}>Denied</option>
+                        </select>
+                    </div>
+                `;
+
+                list.innerHTML =
+                    filterHTML +
+                    (data?.length
+                        ? data
+                              .map(
+                                  (a) => `
+                    <div class="p-6 bg-white border border-stone-200 rounded-2xl shadow-sm mb-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <p class="font-bold text-xl text-stone-900">${a.full_name}</p>
+                                    <a href="mailto:${a.student_email}?subject=Horizon Scholars Application Update" class="text-emerald-600 hover:text-emerald-800">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                            <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                                            <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                                        </svg>
+                                    </a>
+                                </div>
+                                <p class="text-stone-600 font-medium">${a.test_type}</p>
+                                <p class="text-emerald-700 font-bold text-lg mt-1">Fee Amount: $${parseFloat(a.fee_amount).toFixed(2)}</p>
+                                <p class="text-sm text-stone-500 mt-2 bg-stone-50 p-3 rounded-lg italic">"${a.reason}"</p>
+                            </div>
+                            <span class="px-3 py-1 rounded-full text-xs font-bold ${
+                                a.status === "Approved"
+                                    ? "bg-emerald-100 text-emerald-800"
+                                    : a.status === "Denied"
+                                      ? "bg-red-100 text-red-800"
+                                      : "bg-amber-100 text-amber-800"
+                            }">${a.status || "Pending"}</span>
+                        </div>
+
+                        <div class="mt-6 flex flex-wrap gap-2">
+                            ${a.file_url ? `<button onclick="viewFile('${a.file_url}')" class="bg-stone-800 text-white text-xs font-bold px-4 py-2 rounded-lg hover:bg-stone-700 transition">View Receipt</button>` : ""}
+                            <button onclick="updateStatus('${a.id}', 'Approved')" class="bg-emerald-600 text-white text-xs font-bold px-4 py-2 rounded-lg hover:bg-emerald-700 transition">Approve</button>
+                            <button onclick="updateStatus('${a.id}', 'Denied')" class="bg-white border border-red-200 text-red-600 text-xs font-bold px-4 py-2 rounded-lg hover:bg-red-50 transition">Deny</button>
+                        </div>
+                    </div>
+                `,
+                              )
+                              .join("")
+                        : '<p class="text-center text-stone-400 py-10">No applications found in this category.</p>');
+            }
+
+            async function viewFile(fullUrl) {
+                const path = fullUrl.split("/receipts/")[1];
+                const { data, error } = await sb.storage.from("receipts").createSignedUrl(path, 60);
+
+                if (data) {
+                    window.open(data.signedUrl, "_blank");
+                } else {
+                    alert("Error: " + error.message);
+                }
+            }
+
+            async function loadApps() {
+                const { data, error } = await sb.from("apps").select("*");
+                const list = document.getElementById("app-list");
+                if (!list) return;
+
+                list.innerHTML = data?.length
+                    ? data
+                          .map(
+                              (a) => `
+                    <div class="flex justify-between p-6 bg-white border border-stone-200 rounded-2xl shadow-sm">
+                        <div>
+                            <p class="font-bold text-stone-900">${a.test_type}</p>
+                            <p class="text-emerald-700 font-semibold">$${parseFloat(a.fee_amount).toFixed(2)}</p>
+                            <p class="text-xs text-stone-400 mt-1">Submitted: ${new Date(a.created_at).toLocaleDateString()}</p>
+                        </div>
+                        <span class="px-4 py-1 rounded-full ${
+                            a.status === "Approved"
+                                ? "bg-emerald-100 text-emerald-800"
+                                : a.status === "Denied"
+                                  ? "bg-red-100 text-red-800"
+                                  : "bg-amber-100 text-amber-800"
+                        } text-xs font-bold self-center">${a.status || "Pending"}</span>
+                    </div>
+                `,
+                          )
+                          .join("")
+                    : '<p class="text-center text-stone-400">No applications yet.</p>';
+            }
+
+            // Add real-time error clearing
+            document.addEventListener("DOMContentLoaded", () => {
+                const inputs = ["app-name", "app-amount", "app-reason"];
+                const errors = ["name-error", "amount-error", "reason-error"];
+
+                inputs.forEach((inputId, index) => {
+                    const input = document.getElementById(inputId);
+                    if (input) {
+                        input.addEventListener("input", () => {
+                            clearError(inputId, errors[index]);
+                        });
+                    }
+                });
+            });
+
+            checkSession();
+        </script>
+    </body>
+</html>
